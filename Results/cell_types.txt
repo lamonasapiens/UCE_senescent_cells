@@ -1,0 +1,106 @@
+Erythroid
+Monocytes
+ILC
+Plasma cells
+T cells
+B cells
+B-cell lineage
+Promyelocytes
+pDC
+DC
+HSC/MPP
+Fibroblasts
+Myelocytes
+Double-positive thymocytes
+Early MK
+Macrophages
+MNP
+DC precursor
+Megakaryocyte precursor
+ETP
+Mast cells
+Erythrocytes
+Epithelial cells
+Monocyte precursor
+Cycling cells
+Double-negative thymocytes
+Endothelial cells
+Megakaryocytes/platelets
+Mono-mac
+Granulocytes
+Differentiated_KC
+Undifferentiated_KC
+Melanocyte
+migLC
+LC
+ILC1_3
+Tc
+DC2
+Macro_2
+Th
+Treg
+Macro_1
+ILC1_NK
+DC1
+VE1
+Inf_mac
+Mono_mac
+moDC
+MigDC
+F3
+VE2
+Classical monocytes
+Alveolar macrophages
+CD4 T cells
+NK cells
+Monocyte-derived Mph
+Non-classical monocytes
+Multiciliated (non-nasal)
+CD8 T cells
+Smooth muscle
+EC arterial
+AT2
+Alveolar fibroblasts
+Alveolar Mph CCL3+
+Adventitial fibroblasts
+Pericytes
+EC venous pulmonary
+EC general capillary
+Goblet (nasal)
+AT1
+pre-TB secretory
+Alveolar Mph proliferating
+T cells proliferating
+EC aerocyte capillary
+Interstitial Mph perivascular
+Migratory DCs
+Peribronchial fibroblasts
+Lymphatic EC mature
+AT0
+Alveolar Mph MT-positive
+Basal resting
+Neuroendocrine
+Plasmacytoid DCs
+Suprabasal
+Mesothelium
+AT2 proliferating
+EC venous systemic
+Deuterosomal
+Smooth muscle FAM83D+
+Subpleural fibroblasts
+Myofibroblasts
+Hematopoietic stem cells
+Goblet (bronchial)
+Lymphatic EC differentiating
+Ionocyte
+Club (non-nasal)
+SM activated stress response
+SMG mucous
+VE3
+F2
+LE1
+Pericyte_2
+LE2
+Pericyte_1
+ILC2
+NK
