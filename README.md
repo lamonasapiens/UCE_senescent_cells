@@ -9,7 +9,7 @@ All the files are organized as follow:
 - **Results**: outputs from the workflow.
 
 The datasets used for the analysis can be found on the following links:
-- [skin_1]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE275846)).
-- [skin_2]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE254758)).
-- [lungs]((https://explore.data.humancellatlas.org/projects/c16a754f-5da3-46ed-8c1e-6426af2ef625/get-curl-command)).
-- [bone_marrow]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE120221)).
+- [skin_1](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE275846).
+- [skin_2](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE254758).
+- [lungs](https://explore.data.humancellatlas.org/projects/c16a754f-5da3-46ed-8c1e-6426af2ef625/get-curl-command).
+- [bone_marrow](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE120221).
