@@ -1,5 +1,5 @@
 '''This code fine-tunes the hyperparameters of the Random Forest Base Classifier, giving the best
-combination that improves the F1 score (i.e. senescent cells )'''
+combination that improves the F1 score (i.e. senescent cells ) and saving the best model.'''
 
 import numpy as np
 import scanpy as sc
@@ -57,3 +57,43 @@ print('Best parameters found!')
 # Output best parameters
 print("\nBest parameters:", grid_search.best_params_)
 
+
+
+#### FIT THE BEST MODEL ####
+# Initialize the optimized Random Forest
+optimized_rf = grid_search.best_estimator_
+
+# Initialize Self-Training model
+self_training_model = SelfTrainingClassifier(base_estimator=optimized_rf, criterion="k_best", k_best=20, max_iter=10)
+
+# Train the model
+print('\nTraining the best model...')
+self_training_model.fit(train_x, train_y)
+print('Training done!')
+
+# Predict labels on the validation set
+print('\nComputing predictions...')
+predictions = self_training_model.predict(val_x)
+
+
+
+#### EVALUATION OF MODEL PERFORMANCE ####
+print('\nRESULTS:')
+print('\nAccuracy score:')
+print(accuracy_score(val_y, predictions))
+print('\nReport')
+print(classification_report(val_y, predictions, target_names=["Non-senescent", "Senescent"]))
+print('\nConfusion matrix')
+print(confusion_matrix(val_y, predictions))
+
+
+
+#### SAVE THE MODEL ####
+# Define cache file paths
+model_cache_path = "./ALL_cache/M1_best_classifier.pkl"
+predictions_cache_path = "./ALL_cache/M1_predictions.npy"
+
+print("\nSaving model and predictions to cache...")
+joblib.dump(self_training_model, model_cache_path)
+joblib.dump(predictions, predictions_cache_path)
+print("Model and predictions saved!")
