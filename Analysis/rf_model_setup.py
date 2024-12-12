@@ -1,5 +1,5 @@
 '''This file contains the functions required to prepare the data for training the Semi-supervised Random Forest model,
-used in files nº 05, 06 and 07'''
+used in files nº 05 and 06'''
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -30,6 +30,8 @@ def label_extraction(adata):
   x = scaler.fit_transform(x)
 
   return adata, x, y
+
+
 
 def downsample(x, y, size=50000):
   '''This function downsamples the x and y arrays, retaining all the senescent cells but reducing the 
@@ -66,6 +68,8 @@ def downsample(x, y, size=50000):
   y_subset = y[subset_indices]
 
   return x_subset, y_subset
+
+
 
 def get_train_val_sets(x_subset, y_subset, split=0.2):
   '''This function splits the dada into training and validation sets. The default split is set
