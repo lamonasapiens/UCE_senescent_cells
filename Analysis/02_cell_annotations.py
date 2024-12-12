@@ -11,11 +11,11 @@ from celltypist import models
 # Load the adata generated in the clustering analysis
 adata = sc.read_h5ad('./ALL_cache/adata_n30_r1.0.h5ad')
 
-
 # Normalization and log-transformation
 sc.pp.normalize_total(adata, target_sum=1e4) # Normalising
 adata.X = np.log1p(adata.X)  # Log transformation
 print('\nData normalized and log-transformed.')
+
 
 
 #### CELL ANNOTATIONS ####
@@ -55,10 +55,6 @@ adata.obs.loc[lung_cells.obs.index, 'celltypist_labels'] = lung_cells.obs['predi
 
 
 #### SAVING RESULTS AND VISUALIZATION ####
-# UMAP plot only with differentiated keratinocyces
-print('\nGenerating plots...')
-sc.pl.umap(adata, color='celltypist_labels', groups=['Differentiated_KC'], title='Differentiated_KC cells', save='_Dif_KC_n30_r1.0.png', palette='tab20', show=False)
-
 # Save a list with the cell types in a .txt file
 unique_labels = adata.obs['celltypist_labels'].unique()
 
@@ -70,5 +66,3 @@ print('\nList of cell types saved in "Results/cell_types.txt"')
 # Save the adata for downstream analysis
 adata.write('./ALL_cache/02_adata_n30_r1.0.h5ad')
 print('\nAdata saved in ALL_cache folder')
-
-
