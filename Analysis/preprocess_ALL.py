@@ -24,7 +24,7 @@ adata_sk3.var_names_make_unique() # make variables unique
 adata_list.append(adata_sk3)
   
 # Concatenate all the objects into one anndata
-labels =[f'sk1_S{i}' for i in range(1, 9)] + [f'bm1_B{i}' for i in range(1, 9)] + ['lu1', 'sk3']
+labels =[f'sk1_S{i}' for i in range(1, 9)] + [f'bm1_B{i}' for i in range(1, 26)] + ['lu1', 'sk3']
 adata = sc.concat(adata_list, axis=0, join='outer', merge='first', label='batch', keys=labels, index_unique='-')
 
 
