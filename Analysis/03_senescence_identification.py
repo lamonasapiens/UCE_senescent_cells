@@ -17,6 +17,7 @@ paths = ['Casella_UP', 'Casella_DOWN', 'CoreScence_UP', 'CoreScence_DOWN', 'SenM
 
 signatures = {} # create a dictionary to store the signatures
 
+# Loop through the paths to load the signatures
 for i in paths:
   file_path = f'./Sen_Signatures/{i}.txt'
   with open(file_path, "r") as file:
@@ -28,7 +29,7 @@ print('\nSignatures loaded')
 def calculate_signature_score(adata, up_genes, down_genes=None, signature="signature_name"):
   '''This function applies a signature to calculate the score of upregulated genes and substracts the score of downreguated genes'''
   
-  sc.tl.score_genes(adata, gene_list=up_genes, score_name=signature)
+  sc.tl.score_genes(adata, gene_list=up_genes, score_name=signature) # score for upregulated genes
   
   if down_genes: # If downregulated genes are provided, substract this score
     sc.tl.score_genes(adata, gene_list=down_genes, score_name=f'{signature}_down')
@@ -103,7 +104,7 @@ fig, axes = plt.subplots(2, 2, figsize=(10, 8)) # Fix 2 rows and 2 columns
 axes = axes.flatten()
 
 for i, sig in enumerate(signature_names):
-  sns.histplot(adata.obs[sig], kde=True, ax=axes[i]) # Generate an histogram
+  sns.histplot(adata.obs[sig], kde=True, ax=axes[i]) # Generate a histogram
   axes[i].axvline(adata.obs[sig].quantile(0.95), color='red', linestyle='--', label='95th percentile') # Red line in the 95th percentile
   axes[i].legend()
   axes[i].set_title(f'{sig} Score Distribution')
