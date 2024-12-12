@@ -54,7 +54,7 @@ def downsample(x, y, size=50000):
   unknown_size = N - sen_size - non_sen_size  # Remaining for unknown
 
   # Generate random samples for each category (except for senescent, which will be used fully)
-  sen_sample = np.random.choice(sen_indices, size=non_sen_size, replace=False) 
+  sen_sample = np.random.choice(sen_indices, size=sen_size, replace=False) 
   non_sen_sample = np.random.choice(non_sen_indices, size=non_sen_size, replace=False)
   unknown_sample = np.random.choice(unknown_indices, size=unknown_size, replace=False)
 
