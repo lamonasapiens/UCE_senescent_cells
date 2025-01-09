@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import celltypist
 from celltypist import models
+import colorcet as cc
+from funciones import *
 
 
 #### LOAD AND PREPARE THE DATA ####
@@ -54,15 +56,26 @@ adata.obs.loc[lung_cells.obs.index, 'celltypist_labels'] = lung_cells.obs['predi
 
 
 
-#### SAVING RESULTS AND VISUALIZATION ####
-# Save a list with the cell types in a .txt file
-unique_labels = adata.obs['celltypist_labels'].unique()
 
-with open("../Results/cell_types.txt", "w") as file:
-  for label in unique_labels:
-    file.write(str(label) + "\n")
-print('\nList of cell types saved in "Results/cell_types.txt"')
 
-# Save the adata for downstream analysis
+#### SAVING RESULTS ####
 adata.write('./ALL_cache/02_adata_n30_r1.0.h5ad')
-print('\nAdata saved in ALL_cache folder')
+print('\nAdata successfully saved :)')
+
+
+
+
+#### VISUALIZATION ####
+colors = cc.glasbey[:30]
+
+# UMAP plots per tissue
+print('\nSaving UMAP plots...')
+sc.pl.umap(skin_cells, color='leiden_n30_r1.0', title='Skin Leiden clusters', palette=colors, save='_SKIN_clusters.png')
+sc.pl.umap(skin_cells, color='predicted_labels', title='Skin Cell Types', palette=colors, save='_SKIN_cell_types.png')
+
+sc.pl.umap(bm_cells, color='leiden_n30_r1.0', title='Bone Marrow Leiden clusters', palette=colors, save='_MARROW_clusters.png')
+sc.pl.umap(bm_cells, color='predicted_labels', title='Bone Marrow Cell Types', palette=colors, save='_MARROW_cell_types.png')
+
+sc.pl.umap(lung_cells, color='leiden_n30_r1.0', title='Lung Leiden clusters', palette=colors, save='_LUNG_clusters.png')
+sc.pl.umap(lung_cells, color='predicted_labels', title='Lung Cell Types', palette=colors, save='_LUNG_cell_types.png')
+

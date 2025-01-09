@@ -1,4 +1,5 @@
-'''This code uses several senescence signatures to identify potential senescent cells on the dataset'''
+'''This code uses several senescence signatures to identify potential senescent cells on the dataset. The signatures are
+applied to each tissue separatedly to avoid bias.'''
 
 import scanpy as sc
 import numpy as np
@@ -6,9 +7,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 import seaborn as sns
+from funciones import *
 
 #### LOAD DATA ####
 adata = sc.read_h5ad('./ALL_cache/02_adata_n30_r1.0.h5ad')
+
 
 
 #### PREPARING SENESCENCE SIGNATURES ####
@@ -25,89 +28,61 @@ for i in paths:
 print('\nSignatures loaded')
 
 
-# Function to calculate enrichment and store gene scores
-def calculate_signature_score(adata, up_genes, down_genes=None, signature="signature_name"):
-  '''This function applies a signature to calculate the score of upregulated genes and substracts the score of downreguated genes'''
-  
-  sc.tl.score_genes(adata, gene_list=up_genes, score_name=signature) # score for upregulated genes
-  
-  if down_genes: # If downregulated genes are provided, substract this score
-    sc.tl.score_genes(adata, gene_list=down_genes, score_name=f'{signature}_down')
-    adata.obs[signature] = adata.obs[signature] - adata.obs[f'{signature}_down']
-  return adata
 
-
-
-#### APPLY GLOBAL SIGNATURES ####
-# Apply SenMayo, Casella, and CoreScence signatures
-print('\nCalculating scores for SenMayo...')
-calculate_signature_score(adata, signatures['SenMayo'], down_genes=None, signature="SenMayo")
-print('\nCalculating scores for Casella...')
-calculate_signature_score(adata, signatures['Casella_UP'], signatures['Casella_DOWN'], signature="Casella")
-print('\nCalculating scores for CoreScence...')
-calculate_signature_score(adata, signatures['CoreScence_UP'], signatures['CoreScence_DOWN'], signature="CoreScence")
-
-
-
-#### APPLY TISSUE-SPECIFIC SIGNATURES ####
-# Subset the data from each tissue
-print('\nSubsetting the adata based on tissues...')
+#### APPLY THE SIGNATURES ####
+# Subset the adata for each tissue
 skin = adata[adata.obs['tissue'].isin(['skin_1', 'skin_2'])].copy()
 bm = adata[adata.obs['tissue'] == 'bone_marrow'].copy()
 lung = adata[adata.obs['tissue'] == 'lungs'].copy()
 
-# Calculate scores for each subset
-print('\nCalculating scores for SenTissue...')
-calculate_signature_score(skin, signatures['SenSkin_UP'], signatures['SenSkin_DOWN'], signature="SenTissue")
-calculate_signature_score(bm, signatures['SenMarrow_UP'], signatures['SenMarrow_DOWN'], signature="SenTissue")
-calculate_signature_score(lung, signatures['SenLungs_UP'], signatures['SenLungs_DOWN'], signature="SenTissue")
+# Iterate to apply the senescent signatures to each tissue
+signatures_names = ["SenMayo", "Casella", "CoreScence", "SenTissue"]
+tissues = ["Skin", "Marrow", "Lungs"]
+adata_list = [skin, bm, lung]
 
-# Normalize scores for each subset so that they can be comparable
-print('\nNormalizing...\n')
-for adata_tissue in [skin, bm, lung]:
-  scaler = StandardScaler()
-  adata_tissue.obs['normalized'] = scaler.fit_transform(adata_tissue.obs[['SenTissue']])
-    
-# Merge the adatas (keeping only the normalized scores)
-print('\nMerging the adatas...')
-merged = pd.concat([
-  skin.obs[['normalized']],
-  bm.obs[['normalized']],
-  lung.obs[['normalized']]
-])
+for i in range(len(adata_list)):
+  print(f'\nCalculating scores for {tissues[i]}:')
+  print('SenMayo...')
+  calculate_signature_score(adata_list[i], signatures['SenMayo'], down_genes=None, signature="SenMayo")
+  print('Casella...')
+  calculate_signature_score(adata_list[i], signatures['Casella_UP'], signatures['Casella_DOWN'], signature="Casella")
+  print('CoreScence...')
+  calculate_signature_score(adata_list[i], signatures['CoreScence_UP'], signatures['CoreScence_DOWN'], signature="CoreScence")
+  print('SenTissue...')
+  calculate_signature_score(adata_list[i], signatures[f'Sen{tissues[i]}_UP'], signatures[f'Sen{tissues[i]}_DOWN'], signature="SenTissue")
 
-# Upload the normalized scores into the original adata
-adata.obs['SenTissue'] = merged['normalized'] 
 
-# Check if there are missing values in the merged adata.obs['SenTissue']
-print('\nMissing values in merged adata:')
-print(adata.obs['SenTissue'].isnull().sum())
 
-# Save the scores in cache
-adata.write('./ALL_cache/03_adata_n30_r1.0.h5ad')
-print('\nAdata saved in ALL_cache')
+
+#### SAVE THE ADATAS IN CACHE ####
+for i in range(len(adata_list)):
+  adata_list[i].write(f'./ALL_cache/03_{tissues[i]}.h5ad')
+  
+print('\nAdatas saved in ALL_cache')
 
 
 
 #### VISUALIZATION ####
 # Generate gradient plots for each signature
 print('\nPreparing gradient plots...')
-signature_names = ['SenMayo', 'CoreScence', 'Casella', 'SenTissue']
+for i in range(len(adata_list)):
+  for sig in signatures_names:
+    sc.pl.umap(adata_list[i], color=sig, cmap='viridis', title=f'{tissues[i]} {sig} Gradient Plot', save=f'_{tissues[i]}_{sig}.png')
 
-for sig in signature_names:
-  sc.pl.umap(adata, color=sig, cmap='viridis', title=f'{sig} Gradient Plot', save=f'_{sig}.png')
 
-
-# Plot senescent score distributions
+# Plot senescent score distributions for each tissue
 print('\nPreparing distribution plots...')
-fig, axes = plt.subplots(2, 2, figsize=(10, 8)) # Fix 2 rows and 2 columns
-axes = axes.flatten()
 
-for i, sig in enumerate(signature_names):
-  sns.histplot(adata.obs[sig], kde=True, ax=axes[i]) # Generate a histogram
-  axes[i].axvline(adata.obs[sig].quantile(0.95), color='red', linestyle='--', label='95th percentile') # Red line in the 95th percentile
-  axes[i].legend()
-  axes[i].set_title(f'{sig} Score Distribution')
+for i in range(len(adata_list)): # Iterate through the tissues
+  fig, axes = plt.subplots(2, 2, figsize=(10, 8)) # Fix 2 rows and 2 columns
+  axes = axes.flatten()
 
-plt.tight_layout() # Adjust layout
-plt.savefig('Figures/signatures_score_distributions.png') # Save the image
+  for j, sig in enumerate(signatures_names): # Iterate through the signatures
+    sns.histplot(adata_list[i].obs[sig], kde=True, ax=axes[j]) # Generate a histogram
+    axes[j].axvline(adata_list[i].obs[sig].quantile(0.95), color='red', linestyle='--', label='95th percentile') # Red line in the 95th percentile
+    axes[j].legend()
+    axes[j].set_title(f'{sig} Score Distribution')
+
+  plt.tight_layout() # Adjust layout
+  plt.savefig(f'Figures/{tissues[i]}_score_distributions.png') # Save the image
+  plt.close(fig) 
