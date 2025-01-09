@@ -1,12 +1,14 @@
 # UCE_senescent_cells
 
-This repository contains the code and output files for the master´s thesis project: *Characterization of senescent cells using the Universal Cell Embeddings model (UCE) with single-cell RNA sequencing data*.
+This repository contains the code and main output files for the master´s thesis project: *Characterization of senescent cells using the Universal Cell Embeddings model (UCE) with scRNA-seq data*.
 
 All the files are organized as follow:
 
 - **Analysis**: contains the code for each step of the workflow.
 - **Sen_signatures**: text files with the upregulated and downregulated genes for each senescent signature.
-- **Results**: outputs from the workflow, including plots and the trained model.
+- **Results**: main outputs from the workflow: the SenCore signature and the trained Random Forest model.
+
+All the figures and other outputs from the workflow can be found in this shared [Drive folder](https://drive.google.com/drive/folders/1fkQlHaH-mAV5UosfoXwDHiU57mKP01xK?usp=sharing)
 
 The datasets used for the analysis can be found on the following links:
 - [skin_1](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE275846).
