@@ -12,21 +12,6 @@ from funciones import assign_tissue, run_clustering
 warnings.filterwarnings("ignore", category=FutureWarning, message=".*leiden.*")
 
 
-#### FUNCTIONS ####
-# Function to label the cells based on their tissue origin (batch)
-def assign_tissue(batch):
-    if batch.startswith("sk1_S"):
-        return "skin_1"
-    elif batch == "sk3":
-        return "skin_2"
-    elif batch.startswith("bm1_B"):
-        return "bone_marrow"
-    elif batch == "lu1":
-        return "lungs"
-    else:
-        return "unknown"
-
-
 
 ##### CLUSTERING ANALYSIS #####
 # Load data
