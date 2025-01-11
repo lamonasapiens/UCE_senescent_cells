@@ -209,6 +209,10 @@ def get_age_plots(adata, tissue, sen_labels='Sen_consensus'):
 
 #### DOTPLOT DEAs ####
 def DEA_dotplot(adata, degs_df_dic, groupby, n, png_name):
+  '''This function creates a dotplot comparing the top n DEGs for each group.
+  degs_df_dic = a dictionary of DEGs, one entry for each group.
+  groupby = the groups label in the adata'''
+  
   gene_set = set() # A set to store the selected genes for each group (it doesn´t store duplicates)
   ngenes = n # number of top genes to extract from each result
 
@@ -224,7 +228,7 @@ def DEA_dotplot(adata, degs_df_dic, groupby, n, png_name):
 #### GSEA ####
 def compute_gsea(degs_df, outdir, top_n=2000):
   '''
-  This function computes a pre-ranked GSEA using log2 fold change as the ranking metric.
+  This function computes a pre-ranked GSEA using log fold change as the ranking metric.
   The input is a dataframe with DEGs, gene names and log fold change values. The analysis 
   is done only on the top N genes with significant adjusted p-values.
   '''
@@ -265,8 +269,9 @@ def compute_gsea(degs_df, outdir, top_n=2000):
 
 #### ORA ####
 def compute_ora(degs_df, out_excel, out_IDs):
-  '''This function computes a GSEA with the top 2000 significant ranked genes. The input is a dataframe with DEGs, 
-  scores and p-values. The outputs are an excel file with the GSEA results as well as an excel file with 
+  '''This function computes an ORA. 
+  degs_df = dataframe with the DEGs for that group.
+  It outputs an excel file with the ORA results as well as an excel file with 
   the filtered GO-IDs and p-values ready for Revigo analysis'''
 
   print("\nComputing ORA...")
@@ -348,7 +353,7 @@ def label_extraction(adata):
 
 
 def downsample(x, y, size=40000):
-  '''This function downsamples the x and y arrays, retaining all the senescent cells but reducing the 
+  '''This function downsamples the x and y arrays, retaining all the senescent cells if less than 20%, but reducing the 
   amount of non_senescent and unknown cells, to have a more balanced proportion and a managable total size.
   
   It returns:
@@ -372,7 +377,7 @@ def downsample(x, y, size=40000):
   non_sen_size = int(0.50 * N)  # 50% non-senescent
   unknown_size = N - sen_size - non_sen_size  # Remaining for unknown
 
-  # Generate random samples for each category (except for senescent, which will be used fully)
+  # Generate random samples for each category 
   sen_sample = np.random.choice(sen_indices, size=sen_size, replace=False) 
   non_sen_sample = np.random.choice(non_sen_indices, size=non_sen_size, replace=False)
   unknown_sample = np.random.choice(unknown_indices, size=unknown_size, replace=False)
