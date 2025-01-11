@@ -21,7 +21,7 @@ sen_adata = adata[adata.obs['Sen_core'] == 'senescent']
 # Compute neighbors graph and leiden clustering
 print('\nClustering analysis for the senescent subset...')
 sc.pp.neighbors(sen_adata, n_neighbors=30, use_rep='X_uce')
-#sc.tl.leiden(sen_adata, resolution=0.2)
+sc.tl.leiden(sen_adata, resolution=0.2)
 
 # Update cache
 sen_adata.write('./ALL_cache/08_senescent.h5ad')
@@ -31,10 +31,10 @@ print("\nAdata saved successfully :)")
 print('\nPreparing UMAP plots...')
 colors = cc.glasbey[:30]
 
-#sc.tl.umap(sen_adata)
-#sc.pl.umap(sen_adata, color='leiden', title='Sen_core - clusters', save='_08_Sen_core_clusters.png') # Leiden clusters
-#sc.pl.umap(sen_adata, color='celltypist_labels', title='Sen_core - cell types', palette=colors, save='_08_Sen_core_celltypes.png') # cell types
-#sc.pl.umap(sen_adata, color='tissue', title='Sen_core - tissues', save='_08_Sen_core_tissues.png') # tissues
+sc.tl.umap(sen_adata)
+sc.pl.umap(sen_adata, color='leiden', title='Sen_core - clusters', save='_08_Sen_core_clusters.png') # Leiden clusters
+sc.pl.umap(sen_adata, color='celltypist_labels', title='Sen_core - cell types', palette=colors, save='_08_Sen_core_celltypes.png') # cell types
+sc.pl.umap(sen_adata, color='tissue', title='Sen_core - tissues', save='_08_Sen_core_tissues.png') # tissues
 
 
 
@@ -50,15 +50,15 @@ degs_skin={}  # dictionary to store the DEGs for each tissue
 
 print('\nComputing DEA...')
 sc.tl.rank_genes_groups(skin_cells, groupby='tissue', method='t-test')
-#sc.pl.rank_genes_groups(skin_cells, n_genes=20, sharey=False, save='DEA_skin1_skin2.png') # plot the top 20 genes
+sc.pl.rank_genes_groups(skin_cells, n_genes=20, sharey=False, save='DEA_skin1_skin2.png') # plot the top 20 genes
 
 
 for tissue in ['skin_1', 'skin_2']:
   degs = sc.get.rank_genes_groups_df(skin_cells, group=tissue) # Get the DEGs in a dataframe
-  #degs.to_excel(f'DEA_{tissue}.xlsx', index=False) # Save DEGs to excel
+  degs.to_excel(f'DEA_{tissue}.xlsx', index=False) # Save DEGs to excel
   degs_skin[tissue] = degs
 
-#DEA_dotplot(skin_cells, degs_skin, groupby='tissue', n=6, png_name='_DEGs_skin1_skin2.png')
+DEA_dotplot(skin_cells, degs_skin, groupby='tissue', n=6, png_name='_DEGs_skin1_skin2.png')
 
 # ORA
 for tissue, degs_df in degs_skin.items():
@@ -83,14 +83,14 @@ sen_adata.obs['tissue'] = sen_adata.obs['tissue'].replace({'skin_1': 'skin', 'sk
 # Differential expression on each tissue
 print('\nComputing DEA for each tissue...')
 sc.tl.rank_genes_groups(sen_adata, groupby='tissue', method='t-test')
-#sc.pl.rank_genes_groups(sen_adata, n_genes=20, sharey=False, save='DEA_tissues.png') # plot the top 20 genes
+sc.pl.rank_genes_groups(sen_adata, n_genes=20, sharey=False, save='DEA_tissues.png') # plot the top 20 genes
 
 for tissue in ['skin', 'lungs', 'bone_marrow']:
   degs = sc.get.rank_genes_groups_df(sen_adata, group=tissue) # Get the DEGs for each tissue
-  #degs.to_excel(f'DEA_{tissue}.xlsx', index=False) # Save DEGs to excel
+  degs.to_excel(f'DEA_{tissue}.xlsx', index=False) # Save DEGs to excel
   degs_dict[tissue] = degs # add the df to the dictionary
 
-#DEA_dotplot(sen_adata, degs_dict, groupby='tissue', n=6, png_name='_DEGs_tissues.png')
+DEA_dotplot(sen_adata, degs_dict, groupby='tissue', n=6, png_name='_DEGs_tissues.png')
 
 # ORA
 for tissue, degs_df in degs_dict.items():
