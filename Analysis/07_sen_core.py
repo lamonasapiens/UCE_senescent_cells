@@ -1,4 +1,4 @@
-'''This code applies a new senescent signature called SenCore to the dataset, which has the top 15 DEGs found
+'''This code applies a new senescent signature called SenCore to the original dataset. SenCore has the top 20 DEGs found
 in the previous step (06_corrected_signature.py)'''
 
 import scanpy as sc
@@ -20,7 +20,7 @@ adata = sc.read_h5ad('./ALL_cache/05_adata_n30_r1.0.h5ad')
 with open('./Sen_Signatures/core_genes.txt', "r") as file:
   genes = file.read().split()
 
-# Subset the adata for each tissue
+# Subset the adata for each tissue to avoid bias
 skin = adata[adata.obs['tissue'].isin(['skin_1', 'skin_2'])].copy()
 bm = adata[adata.obs['tissue'] == 'bone_marrow'].copy()
 lung = adata[adata.obs['tissue'] == 'lungs'].copy()
@@ -43,35 +43,33 @@ label_arrested_cells(bm)
 label_arrested_cells(lung)
 
 # Label the cells as senescent, unknown and non_senescent for each adata
-for adata in adata_list:
+for adata_tissue in adata_list:
   # Calculate quantiles
-  q90 = adata.obs['Sen_core'].quantile(0.90)
-  q70 = adata.obs['Sen_core'].quantile(0.70)
+  q90 = adata_tissue.obs['Sen_core'].quantile(0.90)
+  q70 = adata_tissue.obs['Sen_core'].quantile(0.70)
 
   # Possible labels
   choices = ['senescent', 'unknown', 'non_senescent']
 
   # Set the conditions to label the cell as senescent or non_senescent
   conditions = [
-    adata.obs['Sen_core'] > q90, # If score in quantile >90 -> senescent
-    (adata.obs['Sen_core'] > q70) & (adata.obs['Sen_core'] <= q90), # If score in quantile 70 < x < 90 -> unknown
-    adata.obs['Sen_core'] <= q70 # If score in quantile <70 -> non_senescent
+    adata_tissue.obs['Sen_core'] > q90, # If score in quantile >90 -> senescent
+    (adata_tissue.obs['Sen_core'] > q70) & (adata_tissue.obs['Sen_core'] <= q90), # If score in quantile 70 < x < 90 -> unknown
+    adata_tissue.obs['Sen_core'] <= q70 # If score in quantile <70 -> non_senescent
   ]
   # Use numpy .select() to select the label based on the conditions
-  adata.obs['Sen_core'] = np.select(conditions, choices, default='non_senescent')
+  adata_tissue.obs['Sen_core'] = np.select(conditions, choices, default='non_senescent')
 
   # If cells are not in cell cycle arrest, label them as non_senescent
-  adata.obs.loc[adata.obs['cell_cycle_arrest'] == False, 'Sen_core'] = 'non_senescent'
+  adata_tissue.obs.loc[adata_tissue.obs['cell_cycle_arrest'] == False, 'Sen_core'] = 'non_senescent'
 
   # convert the column to category type
-  adata.obs['Sen_core'] = adata.obs['Sen_core'].astype('category') 
+  adata_tissue.obs['Sen_core'] = adata_tissue.obs['Sen_core'].astype('category') 
 
 
 
 
 # LOAD THE SEN_CORE LABELS INTO THE ORIGINAL ADATA
-adata = sc.read_h5ad('./ALL_cache/04_adata_n30_r1.0.h5ad')
-
 # Extract 'Sen_core' labels from each tissue adata
 skin_labels = skin.obs[['Sen_core']]
 bm_labels = bm.obs[['Sen_core']]
@@ -81,7 +79,7 @@ lung_labels = lung.obs[['Sen_core']]
 combined_labels = pd.concat([skin_labels, bm_labels, lung_labels])
 
 # Ensure the indices in the combined_labels match the indices in the original adata
-assert combined_labels.index.isin(adata.obs.index).all(), "Indices do not fully align!"
+assert combined_labels.index.isin(adata.obs.index).all(), "Indices do not align!"
 
 # Initialize the 'Sen_core' column in adata with 'non_senescent'
 adata.obs['Sen_core'] = 'non_senescent' # (the non-arrested cells will remain with a non_senescent label)
