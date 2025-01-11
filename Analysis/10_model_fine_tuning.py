@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from funciones import *
 
 #### LOAD DATA ####
-adata = sc.read_h5ad('./aLL_cache/05_adata_n30_r1.0.h5ad')
+adata = sc.read_h5ad('./aLL_cache/08_adata_n30_r1.0.h5ad')
 
 #### PREPARE THE DATA ####
 adata, x, y = label_extraction(adata)
@@ -45,8 +45,7 @@ grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring='f
 '''GridSearchCV is a tool that automates the process of tuning hyperparameters for a given estimator. 
 It finds the combination of parameters that produce the best performance based on a chosen scoring metric.
 
-cd = specifies the number of cross-validation folds to use (here it´s set to 3 splits
-n_jobs=-1 means all available CPU cores will be utilized, speeding up the grid search
+cv = specifies the number of cross-validation folds to use (here it´s set to 3 splits)
 '''
 
 # Start the searching process (training)
@@ -91,5 +90,5 @@ print(confusion_matrix(val_y, predictions))
 
 #### SAVE THE MODEL ####
 print("\nSaving model to cache...")
-joblib.dump(self_training_model, "./ALL_cache/Model_best.pkl")
+joblib.dump(self_training_model, "./ALL_cache/Model_optimized.pkl")
 print("Model saved!")
