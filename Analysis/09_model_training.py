@@ -1,4 +1,4 @@
-'''This code trains a semi-supervised learning model using Random Forest that will learn to 
+'''This code trains a semi-supervised machine learning model using Random Forest that will learn to 
 classify senescent and non-senescent cells. '''
 
 import numpy as np
@@ -27,8 +27,8 @@ train_x, train_y, val_x, val_y = get_train_val_sets(x, y, split=0.2)  # function
 
 
 #### TRAINING THE MODEL ####
-# Initialize the base classifier (e.g., Random Forest)
-base_classifier = RandomForestClassifier(n_jobs=-1, random_state=47)
+# Initialize the base classifier (Random Forest)
+base_classifier = RandomForestClassifier(n_jobs=-1, random_state=47) # n_jobs=-1 means all available CPU cores will be utilized, speeding up the process.
 
 # Initialize the Self-Training model
 self_training_model = SelfTrainingClassifier(base_classifier, criterion='k_best', k_best=20, max_iter=10)  
