@@ -6,7 +6,6 @@ import numpy as np
 import celltypist
 from celltypist import models
 import colorcet as cc
-from funciones import *
 
 
 #### LOAD AND PREPARE THE DATA ####
