@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 import seaborn as sns
-from funciones import *
+from funciones import calculate_signature_score
 
 #### LOAD DATA ####
 adata = sc.read_h5ad('./ALL_cache/02_adata_n30_r1.0.h5ad')
