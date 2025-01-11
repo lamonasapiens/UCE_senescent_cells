@@ -70,11 +70,11 @@ for adata in [skin, bm, lung]:
     unknown_count = labels.count('unknown')
 
     # Apply consensus rules
-    if senescent_count >= 3: # If cell is labeled as senescent in 3 or more signatures -> senescent
+    if senescent_count >= 3: # If cell is labelled as senescent in 3 or more signatures -> senescent
       consensus_labels.append('senescent')
-    elif senescent_count >= 1: # If cell is labeled as senescent in 1 or 2 signatures -> unknown
+    elif senescent_count >= 1: # If cell is labelled as senescent in 1 or 2 signatures -> unknown
       consensus_labels.append('unknown')
-    elif unknown_count >= 4: # If cell is not labeled senescent by any signature, but unknown by at least 3 signatures -> unknown
+    elif unknown_count >= 4: # If cell is not labelled as senescent by any signature, but unknown by 4 signatures -> unknown
       consensus_labels.append('unknown')
     else: # else -> non senescent
       consensus_labels.append('non_senescent')
@@ -98,7 +98,7 @@ lung_labels = lung.obs[['Sen_consensus']]
 combined_labels = pd.concat([skin_labels, bm_labels, lung_labels])
 
 # Ensure the indices in the combined_labels match the indices in the original adata
-assert combined_labels.index.isin(adata.obs.index).all(), "Indices do not fully align!"
+assert combined_labels.index.isin(adata.obs.index).all(), "Indices do not align!"
 
 # Initialize the 'Sen_consensus' column in adata with 'non_senescent'
 adata.obs['Sen_consensus'] = 'non_senescent' # (the non-arrested cells will remain with a non_senescent label)
