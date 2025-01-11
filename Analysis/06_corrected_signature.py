@@ -72,7 +72,7 @@ sc.pl.rank_genes_groups(adata, n_genes=20, sharey=False, save='DEA_Sen_corrected
 # get DEGs from senescent cells
 degs = sc.get.rank_genes_groups_df(adata, group='senescent') 
 degs.to_excel(f'DEA_sen_corrected.xlsx', index=False)
-degs_dict = {'senescent' : degs}
+
 
 # Update cache
 adata.write('./ALL_cache/06_adata_n30_r1.0.h5ad')
@@ -81,5 +81,5 @@ print("\nAdata saved in /ALL_cache")
 
 
 #### GSEA ####
-compute_gsea(degs_dict['senescent'], out_excel='GSEA_Sen_corrected.xlsx', out_IDs='GO_IDs_corrected.xlsx')
+compute_gsea(degs, out_excel='GSEA_Sen_corrected.xlsx', out_IDs='GO_IDs_corrected.xlsx')
 
