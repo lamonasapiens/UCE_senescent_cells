@@ -1,6 +1,6 @@
 # UCE_senescent_cells
 
-This repository contains the code and main output files for the master´s thesis project: *Characterization of senescent cells using the Universal Cell Embeddings model (UCE) with scRNA-seq data*.
+This repository contains the code and main output files for the master´s thesis project: *Characterization of senescent cells using the Universal Cell Embeddings model (UCE) on scRNA-seq data*.
 
 All the files are organized as follow:
 
